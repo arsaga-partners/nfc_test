@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        var content = "test"
+        var content = "testtest"
 
         setContent {
             NFC_TESTTheme {
