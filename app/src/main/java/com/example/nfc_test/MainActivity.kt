@@ -48,6 +48,21 @@ fun NfcTest(nfcAdapter: NfcAdapter?, activity: MainActivity?) {
 
     var id by rememberSaveable { mutableStateOf("") }
 
+    class MyReaderCallback : ReaderCallback {
+        override fun onTagDiscovered(tag: Tag) {
+            Log.d("Hoge", "Tag discoverd.")
+
+            //get idm
+            val idm = tag.id
+            val idmString = bytesToHexString(idm)
+            Log.d("Hoge", idmString)
+            id = idmString
+            if (id != "") {
+                scope.launch { state.hide() }
+            }
+        }
+    }
+
     ModalBottomSheetLayout(
         sheetState = state,
         sheetContent = {
@@ -63,7 +78,6 @@ fun NfcTest(nfcAdapter: NfcAdapter?, activity: MainActivity?) {
 
                 Button(
                     onClick = {
-                        id = "キャンセル"
                         nfcAdapter?.disableReaderMode(activity)
                         scope.launch { state.hide() }
                     },
@@ -99,14 +113,15 @@ fun NfcTest(nfcAdapter: NfcAdapter?, activity: MainActivity?) {
 
                 Button(
                     onClick = {
-                        id = "スキャン"
                         nfcAdapter?.enableReaderMode(
                             activity,
                             MyReaderCallback(),
                             NfcAdapter.FLAG_READER_NFC_F,
                             null
                         )
-                        scope.launch { state.show() }
+                        scope.launch {
+                            state.show()
+                        }
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -127,17 +142,6 @@ fun ResultId(id: String, onIdChange: (String) -> Unit) {
         onValueChange = onIdChange,
         label = { Text("Read ID ..") }
     )
-}
-
-private class MyReaderCallback : ReaderCallback {
-    override fun onTagDiscovered(tag: Tag) {
-        Log.d("Hoge", "Tag discoverd.")
-
-        //get idm
-        val idm = tag.id
-        val idmString = bytesToHexString(idm)
-        Log.d("Hoge", idmString)
-    }
 }
 
 fun bytesToHexString(bytes: ByteArray): String {
