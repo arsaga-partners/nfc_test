@@ -58,6 +58,7 @@ fun NfcTest(nfcAdapter: NfcAdapter?, activity: MainActivity?) {
             Log.d("Hoge", idmString)
             id = idmString
             if (id != "") {
+                nfcAdapter?.disableReaderMode(activity)
                 scope.launch { state.hide() }
             }
         }
@@ -113,6 +114,7 @@ fun NfcTest(nfcAdapter: NfcAdapter?, activity: MainActivity?) {
 
                 Button(
                     onClick = {
+                        id = ""
                         nfcAdapter?.enableReaderMode(
                             activity,
                             MyReaderCallback(),
@@ -140,7 +142,8 @@ fun ResultId(id: String, onIdChange: (String) -> Unit) {
     OutlinedTextField(
         value = id,
         onValueChange = onIdChange,
-        label = { Text("Read ID ..") }
+        label = { Text("Read ID ..") },
+        readOnly = true
     )
 }
 
